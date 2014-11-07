@@ -46,6 +46,8 @@ class MainController < Volt::ModelController
     'BZ' =>  'D', 'BZAL' => 'E'
   }
 
+  $imm_only_ins = {'J' => 'F'}
+
   $registers = {
     'R0' => '0', 'R1' => '1', 'R2' => '2', 'R3' => '3',
     'R4' => '4', 'R5' => '5', 'R6' => '6', 'R7' => '7',
@@ -58,19 +60,27 @@ class MainController < Volt::ModelController
     output = "ADDRESS_RADIX=DEC;\nDATA_RADIX=HEX;\n\nCONTENT BEGIN\n"
     input.split("\n").each do |line|
       tokens = line.upcase.split(' ')
-      if tokens.size == 4 && $three_operand_ins.key?(tokens[0]) && $registers.key?(tokens[1]) && $registers.key?(tokens[2]) && $registers.key?(tokens[3])
+      if tokens.size >= 4 && $three_operand_ins.key?(tokens[0]) && $registers.key?(tokens[1]) && $registers.key?(tokens[2]) && $registers.key?(tokens[3])
         output += (count+=1).to_s + ': ' + $three_operand_ins[tokens[0]] + $registers[tokens[1]] + $registers[tokens[2]] + $registers[tokens[3]] + ';'
-      elsif tokens.size == 3 && $two_operand_ins.key?(tokens[0]) && $registers.key?(tokens[1]) && $registers.key?(tokens[2])
-        output += (count+=1).to_s + ': ' + '0000' + $registers[tokens[1]] + $registers[tokens[2]] + $two_operand_ins[tokens[0]] + ';'
-      elsif tokens.size == 4 && $two_and_imm_ins.key?(tokens[0]) && $registers.key?(tokens[1]) && $registers.key?(tokens[2])
-        output += (count+=1).to_s + ': ' + $two_and_imm_ins[tokens[0]] + $registers[tokens[1]] + $registers[tokens[2]] + 'bits;'
-      elsif tokens.size == 2 && $one_operand_ins.key?(tokens[0]) && $registers.key?(tokens[1])
-        output += (count+=1).to_s + ': ' + '0000' + $one_operand_ins[tokens[0]] + $registers[tokens[1]] + '0000;'
-      elsif tokens.size == 2 && $one_and_imm_ins.key?(tokens[0])
-        output += (count+=1).to_s + ': ' + $one_and_imm_ins[tokens[0]] + 'bits;'
+      elsif tokens.size >= 3 && $two_operand_ins.key?(tokens[0]) && $registers.key?(tokens[1]) && $registers.key?(tokens[2])
+        output += (count+=1).to_s + ': ' + '0' + $registers[tokens[1]] + $registers[tokens[2]] + $two_operand_ins[tokens[0]] + ';'
+      elsif tokens.size >= 4 && $two_and_imm_ins.key?(tokens[0]) && $registers.key?(tokens[1]) && $registers.key?(tokens[2])
+        output += (count+=1).to_s + ': ' + $two_and_imm_ins[tokens[0]] + $registers[tokens[1]] + $registers[tokens[2]] + hex(tokens[3], 1) +';'
+      elsif tokens.size >= 2 && $one_operand_ins.key?(tokens[0]) && $registers.key?(tokens[1])
+        output += (count+=1).to_s + ': ' + '0' + $one_operand_ins[tokens[0]] + $registers[tokens[1]] + '0;'
+      elsif tokens.size >= 3 && $one_and_imm_ins.key?(tokens[0]) && $registers.key?(tokens[1])
+        output += (count+=1).to_s + ': ' + $one_and_imm_ins[tokens[0]] + $registers[tokens[1]] + hex(tokens[2], 2) + ';'
+      elsif tokens.size >= 2 && $imm_only_ins.key?(tokens[0])
+        output += (count+=1).to_s + ': ' + $imm_only_ins[tokens[0]] + hex(tokens[1], 3) + ';'
       end
       output += ' -- ' + line + "\n"
     end
     "WIDTH=16;\nDEPTH=" + count.to_s + ";\n\n" + output + 'END;'
+  end
+
+  # Note, this does not warn of overflow right now
+  def hex(num, len)
+    hs = ("0" * len) + num.to_i.to_s(16)
+    hs[hs.size-len..hs.size]
   end
 end
