@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
-gem 'volt', '0.8.18'
+gem 'volt', git: 'https://github.com/voltrb/volt.git', branch: 'opal7'
+gem 'opal', git: 'https://github.com/opal/opal.git'
 
 
 # The following gem's are optional for themeing
