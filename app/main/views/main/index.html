@@ -2,11 +2,16 @@
   Home
 
 <:Body>
-  <h1>Assembler</h1>
+  <h1>Assembler for 16Cubed</h1>
+  <hr>
   <div class="col-md-5">
-    <textarea class="form-control" rows="20" value="{{ page._raw_assembly }}"></textarea>
+    <label>Input your assembly here</label>
+    <textarea class="form-control" rows="20"
+      value="{{ page._raw_assembly }}"></textarea>
   </div>
   <div class="col-md-5">
-    <textarea class="form-control" rows="20" value="{{ assembled }}"></textarea>
+    <label>Mem.mif is output here</label>
+    <textarea class="form-control" rows="20"
+      value="{{ assembled }}"></textarea>
   </div>
 
