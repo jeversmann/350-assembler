@@ -2,7 +2,16 @@
   Home
 
 <:Body>
-  <h1>Assembler for 16Cubed</h1>
+  <h1>Assembler for {{ page._assembler }}</h1>
+  <div class="btn-group">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+      ISA <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu">
+      <li><a e-click="page._assembler = 'c16'">c16</a></li>
+      <li><a e-click="page._assembler = '16cubed'">16cubed</a></li>
+    </ul>
+  </div>
   <hr>
   <div class="col-md-5">
     <label>Input your assembly here</label>
