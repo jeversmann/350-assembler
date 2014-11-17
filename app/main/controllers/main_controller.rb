@@ -83,7 +83,7 @@ class MainController < Volt::ModelController
       end
       output += ' -- ' + line + "\n"
     end
-    "WIDTH=16;\nDEPTH=" + count.to_s + ";\n\n" + output + 'END;'
+    "WIDTH=16;\nDEPTH=" + (count+1).to_s + ";\n\n" + output + 'END;'
   end
 
   $c_registers = {
@@ -240,18 +240,18 @@ class MainController < Volt::ModelController
       end
       output += ' -- ' + line + "\n"
     end
-    "WIDTH=16;\nDEPTH=" + count.to_s + ";\n\n" + output + 'END;'
+    "WIDTH=16;\nDEPTH=" + (count+1).to_s + ";\n\n" + output + 'END;'
   end
 
-  # Note, this does not warn of overflow right now
   def hex(num, len)
-    hs = ('0' * len) + num.to_i.to_s(16)
+    mask = (1 << (len*4)) - 1
+    hs = ('0' * len) + (num.to_i & mask).to_s(16)
     hs[hs.size-len..hs.size]
   end
 
-  # Note, this does not warn of overflow right now
   def bin(num, len)
-    hs = ('0' * len) + num.to_i.to_s(2)
+    mask = (1 << len) - 1
+    hs = ('0' * len) + (num.to_i & mask).to_s(2)
     hs[hs.size-len..hs.size]
   end
 
